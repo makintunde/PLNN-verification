@@ -26,11 +26,14 @@ class VerificationHelper(object):
 
     def _dense_constraints(self, layer, epsilons, inputs, outputs):
         output_size = layer.out_features
-        weights = layer.get_weights()[0].T
-        bias = layer.get_weights()[1]
-        dotted_outputs = [
-            weights[i].dot(inputs) + bias[i] for i in range(output_size)
-        ]
+        weights = layer.weight.data.numpy()
+        bias = layer.bias.data.numpy()
+        dotted_outputs = []
+
+        for i in range(output_size):
+            next_output = weights[i].dot(inputs) + bias[i]
+            dotted_outputs.append(next_output)
+
         for i in range(output_size):
             self.gmodel.addConstr(dotted_outputs[i] - outputs[i] <= epsilons[i])
             self.gmodel.addConstr(dotted_outputs[i] - outputs[i] >= -epsilons[i])
@@ -52,13 +55,11 @@ class VerificationHelper(object):
 
     def add_vars(self, layers):
         dense, relu = [], []
-        layer_idx = 0
-        for layer in layers:
+        for layer_idx, layer in enumerate(layers):
             if type(layer) is nn.Linear:
                 dense.append(self._dense_vars(layer))
             elif type(layer) is nn.ReLU:
                 relu.append(self._relu_vars(layers, layer_idx))
-            layer_idx += 1
         # for i in range(0, len(layers) - 1, 2):
         #     dense.append(self._dense_vars(layers[i]))
         #     relu.append(self._relu_vars(layers[i + 1]))
@@ -71,7 +72,7 @@ class VerificationHelper(object):
             r = relu[i]
 
             self._dense_constraints(layers[2 * i], e, il, o)
-            self._relu_constraints(layers[2 * i + 1], o, r, d)
+            self._relu_constraints(layers, 2 * i + 1, o, r, d)
             il = r
         (e, o, _) = dense[-1]
         self._dense_constraints(layers[-1], e, il, o)
@@ -122,7 +123,7 @@ class MIPLalNetwork:
         self.model.update()
 
         # Add the constraints for the network itself.
-        self.gurobi_vars.append(helper.add_constraints(self.layers, inp_domain, dense, relu))
+        self.gurobi_vars.append(helper.add_constraints(self.layers, inp_gurobi_vars, dense, relu))
 
         # Assert that this is as expected: a network with a single output
         assert len(self.gurobi_vars[-1]) == 1, "Network doesn't have scalar output"
@@ -168,13 +169,12 @@ def main():
     mip_network, domain = load_and_simplify(args.rlv_infile,
                                             MIPLalNetwork)
     sat, solution = mip_network.solve(domain)
-    print(sat, solution)
 
     if sat is False:
         print("UNSAT")
     else:
         print("SAT")
-        print(solution)
+        #print(solution)
 
 
 if __name__ == '__main__':
