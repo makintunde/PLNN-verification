@@ -121,8 +121,6 @@ following instructions:
 ./scripts/reluplex_runscript.sh
 
 ## Analyse the results
-# (might have to `pip install matplotlib` to generate curves)
-./scripts/generate_analysis_images.sh
 # TwinStream comparison
 ./tools/compare_benchmarks.py results/twinLadder/reluplex/ results/twinLadder/planet/ results/twinLadder/MIP/ results/twinLadder/BaB results/twinLadder/reverify --all_unsat
 ```
