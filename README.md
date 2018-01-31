@@ -1,22 +1,14 @@
-# Piecewise Linear Neural Networks Verification: A comparative study
+# Reachability Analysis for Neural Agent-Environment Systems
 
 This repository contains all the code necessary to replicate the findings
-described in the paper: [Piecewise Linear Neural Networks Verification: A
-comparative study](https://arxiv.org/abs/1711.00455). If you use it in your research, please cite:
+described in the paper "Reachability Analysis for Neural Agent-Environment Systems" (Submission #2560),
+forked from the code used in [Piecewise Linear Neural Networks Verification: A
+comparative study](https://arxiv.org/abs/1711.00455).
 
-```
-@Article{Bunel2017,
-  author        = {Bunel, Rudy and Turkaslan, Ilker and Torr, Philip H.S and Kohli, Pushmeet and Kumar, M Pawan},
-  title        =  {Piecewise Linear Neural Networks Verification: A comparative study},
-  journal      = {arxiv:1711.00455},
-  year         = {2017},
-}
-```
 
-The methods contained in this repository are:
-* Neural Network verification as a Mixed Integer Program feasibility problem
-* Neural Network verification as a Global Optimization problem, solved through
-  Branch and Bound
+Note that all tools have already been compiled in this archive, with results in the `./results` directory,
+so users may skip to section "Analyse the results", unless generating own datasets/results.
+
 
 In addition, this also contains conversion scripts to operate other solvers,
 included as submodules. If you make use of them, please cite the corresponding paper.
@@ -123,20 +115,16 @@ following instructions:
 
 ## Generate the results
 ./scripts/bab_runscript.sh
-./scripts/mip_runscript.sh
+./scripts/mip_solver_runscript.sh
+./scripts/reverify_solver_runscript.sh
 ./scripts/planet_runscript.sh
 ./scripts/reluplex_runscript.sh
 
 ## Analyse the results
 # (might have to `pip install matplotlib` to generate curves)
 ./scripts/generate_analysis_images.sh
-# ACAS comparison
-./tools/compare_benchmarks.py results/ACAS/reluplex/ results/ACAS/planet/ results/ACAS/MIP/ results/ACAS/BaB/
-# collisionDetection comparison
-./tools/compare_benchmarks.py results/collisionDetection/reluplex/ results/collisionDetection/planet/ results/collisionDetection/MIP/ results/collisionDetection/BaB/
 # TwinStream comparison
-./tools/compare_benchmarks.py results/twinLadder/reluplex/ results/twinLadder/planet/ results/twinLadder/MIP/ results/twinLadder/BaB --all_unsat
-# Comparison of Linear Approximation quality
-./scripts/linear_approximation_comparison.sh
-
+./tools/compare_benchmarks.py results/twinLadder/reluplex/ results/twinLadder/planet/ results/twinLadder/MIP/ results/twinLadder/BaB results/twinLadder/reverify --all_unsat
 ```
+
+

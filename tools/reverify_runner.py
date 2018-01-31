@@ -25,6 +25,7 @@ class VerificationHelper(object):
         return epsilon_vars, output_vars, delta_vars
 
     def _dense_constraints(self, layer, epsilons, inputs, outputs):
+        print(layer)
         output_size = layer.out_features
         weights = layer.weight.data.numpy()
         bias = layer.bias.data.numpy()
@@ -79,7 +80,7 @@ class VerificationHelper(object):
         return o
 
 
-class MIPLalNetwork:
+class ReverifyNetwork:
     def __init__(self, layers):
         '''
         layers: A list of Pytorch layers containing only Linear/ReLU/MaxPools
@@ -128,11 +129,7 @@ class MIPLalNetwork:
         # Assert that this is as expected: a network with a single output
         assert len(self.gurobi_vars[-1]) == 1, "Network doesn't have scalar output"
 
-        # TODO: What determines this function?
-        # output_constraint_fn = lambda l, r: r <= l
-
         # Then add the output constraints and any extra input constraints.
-        # TODO: Choose appropriate function
         self.model.addConstr(self.gurobi_vars[-1][-1] <= 0)
 
         # Specify the cutoff of 1e-6.
@@ -167,14 +164,13 @@ def main():
     args = parser.parse_args()
 
     mip_network, domain = load_and_simplify(args.rlv_infile,
-                                            MIPLalNetwork)
+                                            ReverifyNetwork)
     sat, solution = mip_network.solve(domain)
 
     if sat is False:
         print("UNSAT")
     else:
         print("SAT")
-        #print(solution)
 
 
 if __name__ == '__main__':

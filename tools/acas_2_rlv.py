@@ -15,6 +15,8 @@ def main():
                         help='Property to append to the .rlv file.')
 
     args = parser.parse_args()
+    print(args.rpx_infile)
+    print(args.rlv_outfile)
 
     # Write down the network
     network = AcasNetwork(args.rpx_infile)
@@ -22,9 +24,11 @@ def main():
 
     # Add the property to prove if there is one to prove
     if args.property is not None:
+        print(args.property)
         for assert_line in args.property:
             args.rlv_outfile.write(assert_line)
 
+    print("------------------------------------------------------------")
 
 if __name__ == '__main__':
     main()

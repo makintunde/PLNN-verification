@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.6
 import argparse
 import math
-import matplotlib; matplotlib.use('agg')
+import matplotlib
 import matplotlib.pyplot as plt
 import re
 from tools.compare_benchmarks import load_bench_results
