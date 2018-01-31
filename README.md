@@ -7,7 +7,8 @@ comparative study](https://arxiv.org/abs/1711.00455).
 
 
 Note that all tools have already been compiled in this archive, with results in the `./results` directory,
-so users may skip to section "Analyse the results", unless generating own datasets/results.
+so users may skip to section "Analyse the results" part of the "Running the experiments" section, unless generating own
+datasets/results.
 
 
 In addition, this also contains conversion scripts to operate other solvers,
